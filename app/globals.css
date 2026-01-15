@@ -3,6 +3,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Couleurs personnalisées - Pâtisserie */
+  --apple-green: #8DB600;
+  --apple-green-light: #A8D400;
+  --apple-green-dark: #6B8C00;
+
+  --brown-sugar: #B8860B;
+  --brown-sugar-light: #DAA520;
+  --brown-sugar-dark: #996515;
 }
 
 @theme inline {
@@ -10,6 +19,15 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Couleurs de la marque */
+  --color-primary: var(--apple-green);
+  --color-primary-light: var(--apple-green-light);
+  --color-primary-dark: var(--apple-green-dark);
+
+  --color-secondary: var(--brown-sugar);
+  --color-secondary-light: var(--brown-sugar-light);
+  --color-secondary-dark: var(--brown-sugar-dark);
 }
 
 @media (prefers-color-scheme: dark) {
