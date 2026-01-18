@@ -1,41 +1,44 @@
+'use client';
+
+import { useState } from 'react';
+import { PageLayout } from '@/components/layout/PageLayout';
+import { Card, Input, Textarea, Button } from '@/components/ui';
+
 export default function Contact() {
+  const [form, setForm] = useState({ nom: '', email: '', message: '' });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Contact:', form);
+  };
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8 text-center text-primary">Contactez-nous</h1>
-      <div className="max-w-2xl mx-auto">
-        <form className="space-y-6">
-          <div>
-            <label htmlFor="nom" className="block font-semibold mb-2">Nom</label>
-            <input 
-              type="text" 
-              id="nom" 
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block font-semibold mb-2">Email</label>
-            <input 
-              type="email" 
-              id="email" 
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label htmlFor="message" className="block font-semibold mb-2">Message</label>
-            <textarea 
-              id="message" 
-              rows={6}
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-            ></textarea>
-          </div>
-          <button 
-            type="submit"
-            className="w-full bg-primary hover:bg-primary-dark text-white py-3 rounded-lg font-semibold transition"
-          >
+    <PageLayout title="Contactez-nous">
+      <Card className="max-w-2xl mx-auto">
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <Input
+            label="Nom"
+            type="text"
+            value={form.nom}
+            onChange={(e) => setForm({ ...form, nom: e.target.value })}
+          />
+          <Input
+            label="Email"
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
+          <Textarea
+            label="Message"
+            rows={6}
+            value={form.message}
+            onChange={(e) => setForm({ ...form, message: e.target.value })}
+          />
+          <Button type="submit" className="w-full">
             Envoyer
-          </button>
+          </Button>
         </form>
-      </div>
-    </div>
+      </Card>
+    </PageLayout>
   );
 }
