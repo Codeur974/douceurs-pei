@@ -34,10 +34,10 @@ export function ImageGallery({ images, sizePatterns }: ImageModalProps) {
               className="object-cover group-hover:scale-110 transition-transform duration-700"
               sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-primary/80 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4">
-              <p className="font-[family-name:var(--font-alex-brush)] text-white text-2xl drop-shadow-lg">
+              <p className="font-(family-name:--font-alex-brush) text-white text-2xl drop-shadow-lg">
                 {image.title}
               </p>
             </div>
@@ -62,7 +62,7 @@ export function ImageGallery({ images, sizePatterns }: ImageModalProps) {
 
           {/* Titre */}
           <div className="absolute top-4 left-4 z-10">
-            <p className="font-[family-name:var(--font-alex-brush)] text-white text-4xl drop-shadow-lg">
+            <p className="font-(family-name:--font-alex-brush) text-white text-4xl drop-shadow-lg">
               {selectedImage.title}
             </p>
           </div>

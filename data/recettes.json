@@ -1,0 +1,113 @@
+[
+  {
+    "id": "1",
+    "titre": "Paris-Brest",
+    "description": "Un classique de la pâtisserie française à base de pâte à choux et crème pralinée",
+    "image": "/images/paribrest.jpg",
+    "difficulte": "Intermédiaire",
+    "temps": "2h30",
+    "ingredients": [
+      "250g de farine",
+      "200g de beurre",
+      "8 œufs",
+      "250ml d'eau",
+      "250ml de lait",
+      "1 pincée de sel",
+      "200g de praliné",
+      "500ml de crème pâtissière"
+    ],
+    "etapes": [
+      {
+        "titre": "Préparer la pâte à choux",
+        "description": "Portez l'eau, le lait et le beurre à ébullition. Ajoutez la farine d'un coup et mélangez vigoureusement. Desséchez la pâte sur feu doux puis incorporez les œufs un à un."
+      },
+      {
+        "titre": "Former la couronne",
+        "description": "À l'aide d'une poche à douille, formez un cercle de pâte sur une plaque. Saupoudrez d'amandes effilées."
+      },
+      {
+        "titre": "Cuisson",
+        "description": "Enfournez à 180°C pendant 35-40 minutes. Laissez refroidir complètement."
+      },
+      {
+        "titre": "Préparer la crème pralinée",
+        "description": "Mélangez la crème pâtissière refroidie avec le praliné. Montez la crème et incorporez-la délicatement."
+      },
+      {
+        "titre": "Montage",
+        "description": "Coupez le chou en deux horizontalement. Garnissez généreusement de crème pralinée. Refermez et saupoudrez de sucre glace."
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "titre": "Tarte aux fruits",
+    "description": "Une tarte gourmande avec une pâte sablée croustillante et des fruits frais de saison",
+    "image": "/images/tarte.jpg",
+    "difficulte": "Facile",
+    "temps": "1h30",
+    "ingredients": [
+      "250g de farine",
+      "125g de beurre",
+      "100g de sucre glace",
+      "1 œuf",
+      "500ml de crème pâtissière",
+      "Fruits frais de saison"
+    ],
+    "etapes": [
+      {
+        "titre": "Préparer la pâte sablée",
+        "description": "Sablez la farine avec le beurre froid. Ajoutez le sucre glace puis l'œuf. Formez une boule et réfrigérez 1h."
+      },
+      {
+        "titre": "Foncer et cuire",
+        "description": "Étalez la pâte et foncez votre moule. Piquez le fond et cuisez à blanc 20 minutes à 180°C."
+      },
+      {
+        "titre": "Garnir",
+        "description": "Laissez refroidir le fond de tarte. Garnissez de crème pâtissière et disposez les fruits harmonieusement."
+      },
+      {
+        "titre": "Finition",
+        "description": "Nappez de gelée ou de confiture pour faire briller les fruits. Réservez au frais jusqu'au service."
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "titre": "Cupcakes décorés",
+    "description": "Des petits gâteaux moelleux avec un glaçage coloré et des décorations personnalisées",
+    "image": "/images/cup-cake.jpg",
+    "difficulte": "Facile",
+    "temps": "1h",
+    "ingredients": [
+      "200g de farine",
+      "150g de sucre",
+      "100g de beurre",
+      "2 œufs",
+      "100ml de lait",
+      "1 sachet de levure",
+      "200g de beurre (glaçage)",
+      "400g de sucre glace",
+      "Colorants alimentaires"
+    ],
+    "etapes": [
+      {
+        "titre": "Préparer la pâte",
+        "description": "Mélangez le beurre mou avec le sucre. Ajoutez les œufs puis la farine et la levure en alternant avec le lait."
+      },
+      {
+        "titre": "Cuisson",
+        "description": "Répartissez dans des caissettes. Cuisez 18-20 minutes à 180°C. Les cupcakes doivent être dorés."
+      },
+      {
+        "titre": "Préparer le glaçage",
+        "description": "Fouettez le beurre mou puis incorporez progressivement le sucre glace. Divisez et colorez selon vos envies."
+      },
+      {
+        "titre": "Décorer",
+        "description": "À l'aide d'une poche à douille, décorez vos cupcakes refroidis. Ajoutez des décorations en sucre."
+      }
+    ]
+  }
+]

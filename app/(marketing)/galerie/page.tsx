@@ -36,7 +36,7 @@ export default async function Galerie() {
   return (
     <>
       {/* Header avec fond dégradé et étoiles */}
-      <div className="relative bg-gradient-to-br from-primary/20 via-secondary/10 to-primary/20 overflow-hidden">
+      <div className="relative bg-linear-to-br from-primary/20 via-secondary/10 to-primary/20 overflow-hidden">
         {/* Étoiles décoratives */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <span className="absolute top-4 left-[10%] text-primary text-2xl animate-pulse opacity-60">✦</span>
@@ -59,7 +59,7 @@ export default async function Galerie() {
       </div>
 
       {/* Galerie avec fond subtil et étoiles */}
-      <div className="relative bg-gradient-to-b from-primary/10 via-secondary/5 to-primary/10 py-12 overflow-hidden">
+      <div className="relative bg-linear-to-b from-primary/10 via-secondary/5 to-primary/10 py-12 overflow-hidden">
         {/* Étoiles d'arrière-plan */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <span className="absolute top-10 left-[3%] text-primary text-2xl opacity-50">✦</span>

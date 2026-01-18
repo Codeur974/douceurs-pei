@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -8,23 +8,39 @@ export function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-4">Pâtisserie à Domicile</h3>
             <p className="text-gray-200">
-              Des créations gourmandes livrées chez vous
+              Des ateliers gourmands directement chez vous
             </p>
           </div>
           <div>
             <h4 className="font-bold mb-4">Liens rapides</h4>
             <ul className="space-y-2">
-              <li><Link href="/blog" className="hover:underline">Blog</Link></li>
-              <li><Link href="/tarifs" className="hover:underline">Tarifs</Link></li>
-              <li><Link href="/faq" className="hover:underline">FAQ</Link></li>
+              <li>
+                <Link href="/blog" className="hover:underline">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/tarifs" className="hover:underline">
+                  Tarifs
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="hover:underline">
+                  FAQ
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-4">Contact</h4>
             <ul className="space-y-2 text-gray-200">
-              <li>Email: contact@patisserie.fr</li>
-              <li>Tél: 01 23 45 67 89</li>
-              <li><Link href="/contact" className="hover:underline">Formulaire de contact</Link></li>
+              <li>Email: eric.sermande@gmail.com</li>
+              <li>Tél: 0693111897</li>
+              <li>
+                <Link href="/contact" className="hover:underline">
+                  Formulaire de contact
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

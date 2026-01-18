@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1",
+    "clientId": "demo",
+    "date": "2026-01-10",
+    "heure": "14:00",
+    "duree": "3h",
+    "type": "Atelier Classique",
+    "recettes": ["Paris-Brest", "Éclairs au chocolat"],
+    "notes": "Premier atelier, très bon moment"
+  }
+]

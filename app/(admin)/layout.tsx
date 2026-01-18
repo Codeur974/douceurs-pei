@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { LogoutButton, BackToHomeButton } from '@/components/admin/LogoutButton';
+import { Logo } from '@/components/layout/Logo';
 
 export default async function AdminLayout({
   children,
@@ -20,8 +21,11 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-gray-100">
       <header className="bg-secondary text-white">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">Administration</h1>
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <Logo />
+              <h1 className="text-2xl font-bold">Administration</h1>
+            </div>
             <nav className="flex items-center gap-4">
               <Link href="/admin" className="hover:underline">Dashboard</Link>
               <Link href="/admin/blog" className="hover:underline">Blog</Link>

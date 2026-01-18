@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Logo } from "@/components/layout/Logo";
 
 export default function Home() {
   return (
@@ -14,12 +15,16 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/50"></div>
 
         <nav className="relative z-10 container mx-auto px-4 py-4">
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
-            <Link href="/" className="text-white hover:text-secondary transition">Accueil</Link>
-            <Link href="/blog" className="text-white hover:text-secondary transition">Blog</Link>
-            <Link href="/tarifs" className="text-white hover:text-secondary transition">Tarifs</Link>
-            <Link href="/galerie" className="text-white hover:text-secondary transition">Galerie</Link>
-            <Link href="/contact" className="text-white hover:text-secondary transition">Contact</Link>
+          <div className="flex flex-wrap items-center justify-between gap-4 md:gap-8">
+            <Logo className="drop-shadow-lg" imageClassName="drop-shadow-lg" />
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-white">
+              <Link href="/" className="hover:text-secondary transition">Accueil</Link>
+              <Link href="/blog" className="hover:text-secondary transition">Blog</Link>
+              <Link href="/tarifs" className="hover:text-secondary transition">Tarifs</Link>
+              <Link href="/galerie" className="hover:text-secondary transition">Galerie</Link>
+              <Link href="/contact" className="hover:text-secondary transition">Contact</Link>
+              <Link href="/client/login" className="hover:text-secondary transition">Mon Espace</Link>
+            </div>
           </div>
         </nav>
 
@@ -102,6 +107,10 @@ export default function Home() {
               </p>
             </div>
           </div>
+
+          <p className="text-center text-lg md:text-xl text-stone-700 mt-12">
+            Je propose des ateliers autour de l&apos;<span className="font-semibold text-primary">apéritif sucré et salé</span>, des <span className="font-semibold text-primary">viennoiseries</span> et des <span className="font-semibold text-primary">desserts</span>.
+          </p>
         </div>
       </section>
 
