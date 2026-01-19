@@ -1,37 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
-
-const clientsPath = path.join(process.cwd(), 'data', 'clients.json');
-
-interface Client {
-  id: string;
-  email: string;
-  password: string;
-  nom: string;
-  prenom: string;
-  telephone: string;
-  createdAt: string;
-}
-
-async function getClients(): Promise<Client[]> {
-  try {
-    const data = await fs.readFile(clientsPath, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function saveClients(clients: Client[]): Promise<void> {
-  await fs.writeFile(clientsPath, JSON.stringify(clients, null, 2));
-}
-
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
+import { ClientsService } from '@/lib/services';
 
 export async function POST(request: Request) {
   try {
@@ -44,31 +13,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const clients = await getClients();
-
-    // Vérifier si l'email existe déjà
-    if (clients.find((c) => c.email === email)) {
-      return NextResponse.json(
-        { error: 'Cet email est déjà utilisé' },
-        { status: 400 }
-      );
+    const existingClient = await ClientsService.getByEmail(email);
+    if (existingClient) {
+      return NextResponse.json({ error: 'Cet email est déjà utilisé' }, { status: 400 });
     }
 
-    // Créer le nouveau client
-    const newClient: Client = {
-      id: Date.now().toString(),
+    const newClient = await ClientsService.create({
       email,
-      password: hashPassword(password),
+      password,
       nom,
       prenom,
-      telephone: telephone || '',
-      createdAt: new Date().toISOString(),
-    };
+      telephone: telephone || undefined,
+    });
 
-    clients.push(newClient);
-    await saveClients(clients);
-
-    // Créer le cookie de session
     const cookieStore = await cookies();
     const token = Buffer.from(`${newClient.id}:${Date.now()}`).toString('base64');
 
@@ -76,7 +33,7 @@ export async function POST(request: Request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 jours
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     });
 
@@ -91,9 +48,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Erreur inscription:', error);
-    return NextResponse.json(
-      { error: 'Erreur lors de l\'inscription' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erreur lors de l\'inscription' }, { status: 500 });
   }
 }

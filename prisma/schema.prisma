@@ -1,0 +1,224 @@
+// Schéma Prisma pour MongoDB
+// Documentation: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== CLIENTS ====================
+model Client {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  nom       String
+  prenom    String
+  telephone String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  reservations    Reservation[]
+  ateliersClients AtelierClient[]
+  avis            Avis[]
+
+  @@map("clients")
+}
+
+// ==================== RESERVATIONS ====================
+model Reservation {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  clientNom       String
+  clientEmail     String
+  clientTelephone String
+  typePrestation  TypePrestation
+  date            DateTime
+  details         String?
+  statut          StatutReservation @default(EN_ATTENTE)
+  montant         Float?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relation avec Client (optionnel si réservation sans compte)
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id])
+
+  // Relation avec Avis
+  avis Avis[]
+
+  @@map("reservations")
+}
+
+enum TypePrestation {
+  PACK_DECOUVERTE
+  PACK_PREMIUM
+  ATELIER
+  SUR_MESURE
+}
+
+enum StatutReservation {
+  EN_ATTENTE
+  CONFIRMEE
+  ANNULEE
+  TERMINEE
+}
+
+// ==================== GALERIE ====================
+model ImageGalerie {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  src       String
+  title     String
+  ordre     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("galerie")
+}
+
+// ==================== RECETTES ====================
+model Recette {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  titre       String
+  description String
+  image       String
+  difficulte  Difficulte
+  temps       String
+  ingredients String[]
+  etapes      EtapeRecette[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("recettes")
+}
+
+type EtapeRecette {
+  titre       String
+  description String
+}
+
+enum Difficulte {
+  FACILE
+  INTERMEDIAIRE
+  AVANCE
+}
+
+// ==================== ATELIERS ====================
+model Atelier {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  nom         String
+  slug        String        @unique
+  description String
+  duree       Int           // en heures
+  tarif       Float
+  placesMax   Int
+  imageUrl    String?
+  niveau      NiveauAtelier
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  sessions        SessionAtelier[]
+  ateliersClients AtelierClient[]
+
+  @@map("ateliers")
+}
+
+enum NiveauAtelier {
+  DEBUTANT
+  INTERMEDIAIRE
+  AVANCE
+}
+
+model SessionAtelier {
+  id              String              @id @default(auto()) @map("_id") @db.ObjectId
+  date            DateTime
+  placesRestantes Int
+  statut          StatutSessionAtelier @default(PLANIFIE)
+  createdAt       DateTime            @default(now())
+
+  // Relation avec Atelier
+  atelierId String  @db.ObjectId
+  atelier   Atelier @relation(fields: [atelierId], references: [id])
+
+  @@map("sessions_ateliers")
+}
+
+enum StatutSessionAtelier {
+  PLANIFIE
+  COMPLET
+  ANNULE
+}
+
+// ==================== ATELIERS CLIENTS (historique) ====================
+model AtelierClient {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  date     DateTime
+  heure    String
+  duree    String
+  type     String
+  recettes String[]
+  notes    String?
+
+  // Relations
+  clientId  String  @db.ObjectId
+  client    Client  @relation(fields: [clientId], references: [id])
+  atelierId String? @db.ObjectId
+  atelier   Atelier? @relation(fields: [atelierId], references: [id])
+
+  @@map("ateliers_clients")
+}
+
+// ==================== AVIS ====================
+model Avis {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientNom   String
+  note        Int      // 1 à 5
+  commentaire String
+  valide      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  // Relations optionnelles
+  clientId      String?      @db.ObjectId
+  client        Client?      @relation(fields: [clientId], references: [id])
+  reservationId String?      @db.ObjectId
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+
+  @@map("avis")
+}
+
+// ==================== ARTICLES BLOG ====================
+model Article {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  slug      String          @unique
+  title     String
+  excerpt   String
+  content   String
+  image     String
+  category  CategorieArticle
+  date      DateTime
+  location  String?
+  published Boolean         @default(false)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@map("articles")
+}
+
+enum CategorieArticle {
+  ATELIER
+  ARTICLE
+}
+
+// ==================== ADMIN ====================
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  nom       String
+  createdAt DateTime @default(now())
+
+  @@map("admins")
+}

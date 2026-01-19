@@ -1,66 +1,8 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
-
-const clientsPath = path.join(process.cwd(), 'data', 'clients.json');
-const reservationsPath = path.join(process.cwd(), 'data', 'reservations.json');
-
-interface Client {
-  id: string;
-  email: string;
-  password: string;
-  nom: string;
-  prenom: string;
-  telephone: string;
-  createdAt: string;
-}
-
-interface Reservation {
-  id: string;
-  clientId: string;
-  prestation: string;
-  date: string;
-  nom: string;
-  email: string;
-  telephone: string;
-  details: string;
-  status: 'en_attente' | 'confirmee' | 'annulee';
-  createdAt: string;
-}
-
-async function getClients(): Promise<Client[]> {
-  try {
-    const data = await fs.readFile(clientsPath, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function saveClients(clients: Client[]): Promise<void> {
-  await fs.writeFile(clientsPath, JSON.stringify(clients, null, 2));
-}
-
-async function getReservations(): Promise<Reservation[]> {
-  try {
-    const data = await fs.readFile(reservationsPath, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function saveReservations(reservations: Reservation[]): Promise<void> {
-  await fs.writeFile(reservationsPath, JSON.stringify(reservations, null, 2));
-}
-
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
+import { ClientsService, ReservationsService } from '@/lib/services';
+import { TypePrestation, StatutReservation } from '@prisma/client';
 
 function generatePassword(): string {
-  // Génère un mot de passe de 8 caractères
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let password = '';
   for (let i = 0; i < 8; i++) {
@@ -68,6 +10,24 @@ function generatePassword(): string {
   }
   return password;
 }
+
+const typePrestationMap: Record<string, TypePrestation> = {
+  'pack-decouverte': 'PACK_DECOUVERTE',
+  'pack-premium': 'PACK_PREMIUM',
+  'atelier': 'ATELIER',
+  'sur-mesure': 'SUR_MESURE',
+};
+
+const statutMap: Record<string, StatutReservation> = {
+  'en-attente': 'EN_ATTENTE',
+  'confirmee': 'CONFIRMEE',
+  'annulee': 'ANNULEE',
+  'terminee': 'TERMINEE',
+  'EN_ATTENTE': 'EN_ATTENTE',
+  'CONFIRMEE': 'CONFIRMEE',
+  'ANNULEE': 'ANNULEE',
+  'TERMINEE': 'TERMINEE',
+};
 
 export async function POST(request: Request) {
   try {
@@ -80,81 +40,83 @@ export async function POST(request: Request) {
       );
     }
 
-    const clients = await getClients();
-    let client = clients.find((c) => c.email === email);
+    let client = await ClientsService.getByEmail(email);
     let generatedPassword: string | null = null;
     let isNewClient = false;
 
-    // Si le client n'existe pas, on le crée
     if (!client) {
       isNewClient = true;
       generatedPassword = generatePassword();
 
-      // Séparer le nom complet en prénom et nom
       const nameParts = nom.trim().split(' ');
       const prenom = nameParts[0] || '';
       const nomFamille = nameParts.slice(1).join(' ') || nameParts[0] || '';
 
-      client = {
-        id: Date.now().toString(),
+      client = await ClientsService.create({
         email,
-        password: hashPassword(generatedPassword),
+        password: generatedPassword,
         nom: nomFamille,
         prenom,
-        telephone: telephone || '',
-        createdAt: new Date().toISOString(),
-      };
-
-      clients.push(client);
-      await saveClients(clients);
+        telephone: telephone || undefined,
+      });
     }
 
-    // Créer la réservation
-    const reservations = await getReservations();
-    const newReservation: Reservation = {
-      id: Date.now().toString(),
+    const newReservation = await ReservationsService.create({
+      clientNom: nom,
+      clientEmail: email,
+      clientTelephone: telephone || '',
+      typePrestation: typePrestationMap[prestation] || 'SUR_MESURE',
+      date: new Date(date),
+      details: details || undefined,
       clientId: client.id,
-      prestation,
-      date,
-      nom,
-      email,
-      telephone: telephone || '',
-      details: details || '',
-      status: 'en_attente',
-      createdAt: new Date().toISOString(),
-    };
+    });
 
-    reservations.push(newReservation);
-    await saveReservations(reservations);
-
-    // Retourner les infos
     return NextResponse.json({
       success: true,
       isNewClient,
-      credentials: isNewClient ? {
-        email,
-        password: generatedPassword,
-      } : null,
-      reservation: {
-        id: newReservation.id,
-        prestation,
-        date,
-      },
+      credentials: isNewClient ? { email, password: generatedPassword } : null,
+      reservation: { id: newReservation.id, prestation, date },
     });
   } catch (error) {
     console.error('Erreur réservation:', error);
-    return NextResponse.json(
-      { error: 'Erreur lors de la réservation' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erreur lors de la réservation' }, { status: 500 });
   }
 }
 
 export async function GET() {
   try {
-    const reservations = await getReservations();
+    const reservations = await ReservationsService.getAll();
     return NextResponse.json(reservations);
-  } catch {
+  } catch (error) {
+    console.error('Erreur GET reservations:', error);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const { id, statut, ...rest } = await request.json();
+
+    const data: Record<string, unknown> = { ...rest };
+    if (statut) {
+      data.statut = statutMap[statut] || statut;
+    }
+
+    const reservation = await ReservationsService.update(id, data as Parameters<typeof ReservationsService.update>[1]);
+    return NextResponse.json(reservation);
+  } catch (error) {
+    console.error('Erreur PUT reservation:', error);
+    return NextResponse.json({ error: 'Erreur lors de la modification' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { id } = await request.json();
+    await ReservationsService.delete(id);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Erreur DELETE reservation:', error);
+    return NextResponse.json({ error: 'Erreur lors de la suppression' }, { status: 500 });
   }
 }

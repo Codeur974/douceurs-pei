@@ -1,35 +1,18 @@
 import { NextResponse } from 'next/server';
+import { GalerieService } from '@/lib/services';
 import fs from 'fs/promises';
 import path from 'path';
 
-const dataPath = path.join(process.cwd(), 'data', 'galerie.json');
-
-interface GalerieImage {
-  id: string;
-  src: string;
-  title: string;
-}
-
-async function getImages(): Promise<GalerieImage[]> {
+export async function GET() {
   try {
-    const data = await fs.readFile(dataPath, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
+    const images = await GalerieService.getAll();
+    return NextResponse.json(images);
+  } catch (error) {
+    console.error('Erreur GET galerie:', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }
 
-async function saveImages(images: GalerieImage[]): Promise<void> {
-  await fs.writeFile(dataPath, JSON.stringify(images, null, 2));
-}
-
-// GET - Récupérer toutes les images
-export async function GET() {
-  const images = await getImages();
-  return NextResponse.json(images);
-}
-
-// POST - Ajouter une image
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
@@ -40,24 +23,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Fichier et titre requis' }, { status: 400 });
     }
 
-    // Générer un nom de fichier unique
     const extension = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
     const filePath = path.join(process.cwd(), 'public', 'images', fileName);
 
-    // Sauvegarder le fichier
     const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(filePath, buffer);
 
-    // Ajouter à la galerie
-    const images = await getImages();
-    const newImage: GalerieImage = {
-      id: Date.now().toString(),
+    const newImage = await GalerieService.create({
       src: `/images/${fileName}`,
       title,
-    };
-    images.push(newImage);
-    await saveImages(images);
+    });
 
     return NextResponse.json(newImage);
   } catch (error) {
@@ -66,21 +42,15 @@ export async function POST(request: Request) {
   }
 }
 
-// DELETE - Supprimer une image
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
 
-    const images = await getImages();
-    const imageIndex = images.findIndex((img) => img.id === id);
-
-    if (imageIndex === -1) {
+    const image = await GalerieService.getById(id);
+    if (!image) {
       return NextResponse.json({ error: 'Image non trouvée' }, { status: 404 });
     }
 
-    const image = images[imageIndex];
-
-    // Supprimer le fichier (seulement si c'est dans /images/)
     if (image.src.startsWith('/images/')) {
       const filePath = path.join(process.cwd(), 'public', image.src);
       try {
@@ -90,10 +60,7 @@ export async function DELETE(request: Request) {
       }
     }
 
-    // Retirer de la liste
-    images.splice(imageIndex, 1);
-    await saveImages(images);
-
+    await GalerieService.delete(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Erreur suppression:', error);
@@ -101,21 +68,10 @@ export async function DELETE(request: Request) {
   }
 }
 
-// PUT - Modifier le titre d'une image
 export async function PUT(request: Request) {
   try {
     const { id, title } = await request.json();
-
-    const images = await getImages();
-    const image = images.find((img) => img.id === id);
-
-    if (!image) {
-      return NextResponse.json({ error: 'Image non trouvée' }, { status: 404 });
-    }
-
-    image.title = title;
-    await saveImages(images);
-
+    const image = await GalerieService.updateTitle(id, title);
     return NextResponse.json(image);
   } catch (error) {
     console.error('Erreur modification:', error);
